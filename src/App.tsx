@@ -1,12 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { Button } from "@fluentui/react-button";
 import { Input } from "@fluentui/react-input";
 import { manifest } from "./content/generated/manifest";
+import heroImage from "./images/hero-reactor-docs-preview.png";
+import pathfinderImage from "./images/pathfinder-app-window-montage.png";
+import appPreviewImage from "./images/showcase-app-preview.png";
+import codeScreenshotImage from "./images/showcase-code-screenshot.png";
+import montageAltImage from "./images/reactor-app-window-montage-alt.png";
 import type { DocsPage, NavNode } from "./types";
 
+const prototypeRepoUrl = "https://github.com/abmprottoy/reactor-docs-preview";
 const pagesBySlug = new Map(manifest.pages.map((page) => [page.slug, page]));
 const homePage = pagesBySlug.get("/") || manifest.pages[0];
 const maxSearchResults = 8;
+const basePath = normalizeBasePath(import.meta.env.BASE_URL);
 
 type SearchResult = {
   page: DocsPage;
@@ -15,14 +23,14 @@ type SearchResult = {
 };
 
 export function App() {
-  const [path, setPath] = useState(() => normalizePath(window.location.pathname));
+  const [path, setPath] = useState(() => getCurrentPath());
   const [dark, setDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
   const [navOpen, setNavOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeHeadingId, setActiveHeadingId] = useState("");
 
   useEffect(() => {
-    const onPopState = () => setPath(normalizePath(window.location.pathname));
+    const onPopState = () => setPath(getCurrentPath());
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
@@ -67,9 +75,10 @@ export function App() {
   const searchResults = useMemo(() => searchPages(query), [query]);
 
   const navigate = (slug: string) => {
-    setPath(slug);
+    const nextPath = normalizePath(stripBasePath(slug));
+    setPath(nextPath);
     setNavOpen(false);
-    window.history.pushState({}, "", slug);
+    window.history.pushState({}, "", toAppUrl(nextPath));
     window.scrollTo({ top: 0 });
   };
 
@@ -89,13 +98,16 @@ export function App() {
             <button className="brand-button" onClick={() => navigate("/")}>
               <span className="brand-product">Microsoft.UI.Reactor</span>
               <span className="brand-preview">Docs Preview</span>
+              <span className="brand-unofficial">Unofficial</span>
             </button>
           </div>
           <div className="topbar-actions">
-            <a href={manifest.repoUrl} target="_blank" rel="noreferrer">
+            <a href={prototypeRepoUrl} target="_blank" rel="noreferrer">
+              <FluentIcon name="code" />
               GitHub
             </a>
             <Button appearance="subtle" onClick={() => setDark((value) => !value)}>
+              <FluentIcon name={dark ? "sun" : "moon"} />
               {dark ? "Light" : "Dark"}
             </Button>
           </div>
@@ -139,12 +151,15 @@ export function App() {
             </aside>
           </div>
         )}
+
+        <SiteFooter />
       </div>
     </div>
   );
 }
 
 function LandingPage({ onNavigate }: { onNavigate: (slug: string) => void }) {
+  const [activeSlide, setActiveSlide] = useState(0);
   const entryCards = [
     {
       title: "Build your first Reactor app",
@@ -190,20 +205,40 @@ function LandingPage({ onNavigate }: { onNavigate: (slug: string) => void }) {
       slug: "/navigation/",
     },
   ];
+  const carouselSlides = [
+    {
+      image: codeScreenshotImage,
+      title: "C# as the source of UI truth",
+      alt: "C# Reactor code screenshot",
+    },
+    {
+      image: appPreviewImage,
+      title: "Reconciled into native Windows controls",
+      alt: "Reactor app preview artwork",
+    },
+    {
+      image: montageAltImage,
+      title: "From components to windows",
+      alt: "Reactor component-to-window montage",
+    },
+  ];
+  const currentSlide = carouselSlides[activeSlide];
 
   return (
     <div className="landing-page">
-      <section className="landing-hero">
+      <section
+        className="landing-hero"
+        style={{ "--hero-image": `url(${heroImage})` } as CSSProperties}
+      >
         <div className="landing-hero-copy">
-          <span className="landing-kicker">Welcome to</span>
+          <span className="landing-badge">Unofficial</span>
           <h1>
-            <span>Microsoft.UI</span>
-            <span>Reactor</span>
+            <span>Microsoft.UI.Reactor</span>
             <span>Docs Preview</span>
           </h1>
           <p>
-            An unofficial Fluent-style documentation shell for the experimental
-            declarative C# framework for native Windows desktop apps.
+            A Fluent-inspired front end for reading Microsoft.UI.Reactor docs,
+            with content synced from the upstream Microsoft repository.
           </p>
           <div className="landing-actions">
             <Button appearance="primary" onClick={() => onNavigate("/getting-started/")}>
@@ -214,24 +249,15 @@ function LandingPage({ onNavigate }: { onNavigate: (slug: string) => void }) {
             </Button>
           </div>
         </div>
-        <div className="landing-visual" aria-label="Future hero image placeholder">
-          <div className="image-slot image-slot-large">
-            <span>Hero image slot</span>
-            <small>Replace with ChatGPT artwork later</small>
-          </div>
-        </div>
       </section>
 
       <section className="landing-entry">
         <div className="landing-section-heading">
-          <span>Choose a path</span>
-          <h2>If you want to...</h2>
+          <span>Choose your path</span>
+          <h2>Getting started</h2>
         </div>
         <div className="pathfinder-card">
-          <div className="pathfinder-image image-slot">
-            <span>Solid image card slot</span>
-            <small>Suggested: Reactor app window montage</small>
-          </div>
+          <img className="pathfinder-image" src={pathfinderImage} alt="Reactor app window montage" />
           <div className="pathfinder-list">
             {entryCards.map((card) => (
               <button key={card.slug} className="pathfinder-row" onClick={() => onNavigate(card.slug)}>
@@ -266,16 +292,49 @@ function LandingPage({ onNavigate }: { onNavigate: (slug: string) => void }) {
             Compare with XAML
           </Button>
         </div>
-        <div className="showcase-grid">
-          <div className="image-slot">
-            <span>Code screenshot slot</span>
-          </div>
-          <div className="image-slot">
-            <span>App preview slot</span>
+        <div className="showcase-carousel" aria-label="Reactor preview images">
+          <img className="showcase-image" src={currentSlide.image} alt={currentSlide.alt} />
+          <div className="carousel-controls">
+            <span>{currentSlide.title}</span>
+            <div className="carousel-buttons">
+              {carouselSlides.map((slide, index) => (
+                <button
+                  key={slide.title}
+                  className={activeSlide === index ? "active" : ""}
+                  onClick={() => setActiveSlide(index)}
+                  aria-label={`Show ${slide.title}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
+
     </div>
+  );
+}
+
+function SiteFooter() {
+  return (
+    <footer className="site-footer">
+      <div>
+        <strong>Reactor Docs Preview</strong>
+        <p>
+          This is an unofficial design prototype. It is not affiliated with,
+          endorsed by, or maintained by Microsoft.
+        </p>
+      </div>
+      <div>
+        <p>
+          Microsoft, Fluent, Windows, WinUI, and related product names may be
+          trademarks of Microsoft Corporation. Documentation content is sourced
+          from the Microsoft.UI.Reactor repository with attribution.
+        </p>
+        <a href={prototypeRepoUrl} target="_blank" rel="noreferrer">
+          View this prototype on GitHub
+        </a>
+      </div>
+    </footer>
   );
 }
 
@@ -317,7 +376,7 @@ function MarkdownPage({
       }
 
       event.preventDefault();
-      onNavigate(normalizePath(href));
+      onNavigate(normalizePath(stripBasePath(href)));
     };
 
     article?.addEventListener("click", onClick);
@@ -354,6 +413,20 @@ function MarkdownPage({
       </div>
       <div dangerouslySetInnerHTML={{ __html: html }} />
     </article>
+  );
+}
+
+function FluentIcon({ name }: { name: "code" | "moon" | "sun" }) {
+  const paths = {
+    code: "M8.64 7.23a.75.75 0 0 1 .13 1.05L5.5 12l3.27 3.72a.75.75 0 1 1-1.13.99l-3.7-4.22a.75.75 0 0 1 0-.98l3.7-4.22a.75.75 0 0 1 1.05-.06Zm6.72 0a.75.75 0 0 1 1.05.06l3.7 4.22c.25.28.25.7 0 .98l-3.7 4.22a.75.75 0 1 1-1.13-.99L18.5 12l-3.27-3.72a.75.75 0 0 1 .13-1.05Zm-2.1-.2a.75.75 0 0 1 .48.95l-3 9a.75.75 0 1 1-1.42-.48l3-9a.75.75 0 0 1 .94-.47Z",
+    moon: "M12.77 3.1a.75.75 0 0 1 .3.93A8.23 8.23 0 0 0 20 15.62a.75.75 0 0 1 .5 1.09A9.25 9.25 0 1 1 11.3 3a.75.75 0 0 1 1.47.1ZM10.98 4.68a7.75 7.75 0 1 0 7.52 11.87A9.73 9.73 0 0 1 10.98 4.68Z",
+    sun: "M12 4.75a.75.75 0 0 1-.75-.75V2.75a.75.75 0 0 1 1.5 0V4c0 .41-.34.75-.75.75Zm0 16.5a.75.75 0 0 1-.75-.75v-1.25a.75.75 0 0 1 1.5 0v1.25c0 .41-.34.75-.75.75ZM4 12.75H2.75a.75.75 0 0 1 0-1.5H4a.75.75 0 0 1 0 1.5Zm17.25 0H20a.75.75 0 0 1 0-1.5h1.25a.75.75 0 0 1 0 1.5ZM6.05 7.11a.75.75 0 0 1-.53-.22l-.88-.88A.75.75 0 1 1 5.7 4.95l.88.88a.75.75 0 0 1-.53 1.28Zm12.78 12.78a.75.75 0 0 1-.53-.22l-.88-.88a.75.75 0 0 1 1.06-1.06l.88.88a.75.75 0 0 1-.53 1.28Zm-.88-12.78a.75.75 0 0 1-.53-1.28l.88-.88a.75.75 0 0 1 1.06 1.06l-.88.88a.75.75 0 0 1-.53.22ZM5.17 19.89a.75.75 0 0 1-.53-1.28l.88-.88a.75.75 0 0 1 1.06 1.06l-.88.88a.75.75 0 0 1-.53.22ZM12 7.25a4.75 4.75 0 1 1 0 9.5 4.75 4.75 0 0 1 0-9.5Zm0 1.5a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5Z",
+  };
+
+  return (
+    <svg className="fluent-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d={paths[name]} fill="currentColor" />
+    </svg>
   );
 }
 
@@ -561,6 +634,32 @@ function normalizePath(pathname: string) {
   }
 
   return clean.endsWith("/") ? clean : `${clean}/`;
+}
+
+function normalizeBasePath(pathname: string) {
+  if (!pathname || pathname === "/") {
+    return "/";
+  }
+
+  return pathname.endsWith("/") ? pathname : `${pathname}/`;
+}
+
+function stripBasePath(pathname: string) {
+  if (basePath === "/" || !pathname.startsWith(basePath)) {
+    return pathname;
+  }
+
+  return `/${pathname.slice(basePath.length)}`;
+}
+
+function getCurrentPath() {
+  return normalizePath(stripBasePath(window.location.pathname));
+}
+
+function toAppUrl(slug: string) {
+  const normalized = normalizePath(slug);
+  const base = basePath === "/" ? "" : basePath.replace(/\/$/, "");
+  return `${base}${normalized}`;
 }
 
 function filterNav(nodes: NavNode[], query: string): NavNode[] {

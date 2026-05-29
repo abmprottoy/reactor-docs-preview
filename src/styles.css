@@ -197,6 +197,17 @@ input {
   font-size: 13px;
 }
 
+.brand-unofficial {
+  border: 1px solid color-mix(in srgb, var(--colorBrandForegroundLink) 46%, transparent);
+  border-radius: 999px;
+  padding: 2px 7px;
+  background: color-mix(in srgb, var(--colorBrandForegroundLink) 10%, transparent);
+  color: var(--colorBrandForegroundLink);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
 .topbar-actions a,
 .article-links a {
   display: inline-flex;
@@ -204,6 +215,24 @@ input {
   gap: 6px;
   color: var(--colorBrandForegroundLink);
   text-decoration: none;
+}
+
+.topbar-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fluent-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: currentColor;
+}
+
+.landing-badge .fluent-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .prototype-banner {
@@ -371,20 +400,61 @@ mark {
 .landing-page {
   width: min(1180px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 58px 0 88px;
+  padding: 0 0 88px;
 }
 
 .landing-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 0.94fr) minmax(320px, 0.86fr);
-  gap: 44px;
+  position: relative;
+  display: flex;
   align-items: center;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   min-height: clamp(520px, 70vh, 720px);
+  overflow: hidden;
+  padding: clamp(44px, 7vw, 88px) max(24px, calc((100vw - 1180px) / 2));
+  background-image: var(--hero-image);
+  background-position: center;
+  background-size: cover;
+}
+
+.landing-hero::before,
+.landing-hero::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+.landing-hero::before {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.84) 0%, rgba(0, 0, 0, 0.66) 42%, rgba(0, 0, 0, 0.18) 100%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.22));
+}
+
+.landing-hero::after {
+  background: radial-gradient(circle at 18% 45%, rgba(0, 120, 212, 0.26), transparent 34%);
 }
 
 .landing-hero-copy {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: 24px;
+  width: min(650px, 100%);
+}
+
+.landing-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid color-mix(in srgb, var(--colorBrandForegroundLink) 46%, transparent);
+  border-radius: 999px;
+  padding: 2px 7px;
+  background: color-mix(in srgb, var(--colorBrandForegroundLink) 10%, transparent);
+  color: var(--colorBrandForegroundLink);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.2;
 }
 
 .landing-kicker,
@@ -396,7 +466,8 @@ mark {
 
 .landing-hero h1 {
   margin: 0;
-  font-size: clamp(48px, 6vw, 76px);
+  color: #ffffff;
+  font-size: clamp(48px, 5.6vw, 72px);
   line-height: 1;
   letter-spacing: 0;
 }
@@ -406,7 +477,7 @@ mark {
 }
 
 .landing-hero h1 span:last-child {
-  color: var(--colorNeutralForeground3);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .landing-hero p,
@@ -418,14 +489,30 @@ mark {
   line-height: 1.58;
 }
 
+.landing-hero p {
+  color: rgba(255, 255, 255, 0.86);
+}
+
 .landing-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.landing-visual {
-  min-width: 0;
+.landing-image,
+.pathfinder-image,
+.showcase-image {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
+.landing-image {
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: 8px;
+  background: var(--colorNeutralBackground2);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+  object-fit: cover;
 }
 
 .image-slot {
@@ -452,7 +539,9 @@ mark {
 }
 
 .image-slot-large {
-  min-height: clamp(360px, 52vw, 560px);
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  object-position: center;
 }
 
 .landing-entry,
@@ -485,16 +574,9 @@ mark {
 
 .pathfinder-image {
   min-height: 420px;
+  height: 100%;
   border: 0;
   border-radius: 0;
-  background:
-    linear-gradient(145deg, rgba(15, 108, 189, 0.88), rgba(30, 30, 30, 0.88)),
-    var(--colorBrandBackground2);
-  color: #ffffff;
-}
-
-.pathfinder-image small {
-  color: rgba(255, 255, 255, 0.76);
 }
 
 .pathfinder-list {
@@ -603,10 +685,78 @@ mark {
   gap: 18px;
 }
 
-.showcase-grid {
+.showcase-carousel {
+  overflow: hidden;
+  border: 1px solid var(--colorNeutralStroke2);
+  border-radius: 8px;
+  background: var(--colorNeutralBackground1);
+}
+
+.showcase-image {
+  aspect-ratio: 16 / 10;
+  border: 0;
+  border-radius: 0;
+  background: var(--colorNeutralBackground1);
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-top: 1px solid var(--colorNeutralStroke2);
+}
+
+.carousel-controls span {
+  color: var(--colorNeutralForeground2);
+  font-weight: 650;
+}
+
+.carousel-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-buttons button {
+  width: 28px;
+  height: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--colorNeutralStroke2);
+  cursor: pointer;
+}
+
+.carousel-buttons button.active {
+  background: var(--colorBrandStroke1);
+}
+
+.site-footer {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 32px;
+  width: min(1180px, calc(100% - 48px));
+  margin: 70px auto 0;
+  padding: 28px 0 40px;
+  border-top: 1px solid var(--colorNeutralStroke2);
+  color: var(--colorNeutralForeground3);
+}
+
+.site-footer strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--colorNeutralForeground1);
+}
+
+.site-footer p {
+  margin: 0 0 10px;
+  line-height: 1.55;
+}
+
+.site-footer a {
+  color: var(--colorBrandForegroundLink);
+  font-weight: 650;
+  text-decoration: none;
 }
 
 .article {
@@ -857,6 +1007,10 @@ h3:hover .heading-anchor {
   .landing-cards {
     grid-template-columns: 1fr;
   }
+
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 760px) {
@@ -915,7 +1069,7 @@ h3:hover .heading-anchor {
 
   .landing-page {
     width: min(100% - 32px, 1180px);
-    padding-top: 34px;
+    padding-top: 0;
   }
 
   .landing-hero {
@@ -946,7 +1100,8 @@ h3:hover .heading-anchor {
     padding: 24px;
   }
 
-  .showcase-grid {
-    grid-template-columns: 1fr;
+  .carousel-controls {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
