@@ -1,0 +1,48 @@
+{
+  "name": "reactor-docs-preview",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Unofficial Fluent-style documentation shell for Microsoft.UI.Reactor.",
+  "scripts": {
+    "sync:docs": "tsx scripts/sync-docs.ts",
+    "dev": "npm run sync:docs && vite --host 127.0.0.1",
+    "build": "npm run sync:docs && tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@fluentui/react-button": "^9.9.2",
+    "@fluentui/react-input": "^9.8.3",
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-raw": "^7.0.0",
+    "rehype-slug": "^6.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.10.2",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "js-yaml": "^4.1.0",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abmprottoy/reactor-docs-preview.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/abmprottoy/reactor-docs-preview/issues"
+  },
+  "homepage": "https://github.com/abmprottoy/reactor-docs-preview#readme"
+}
