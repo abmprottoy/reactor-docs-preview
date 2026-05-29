@@ -119,6 +119,7 @@
 
 body {
   margin: 0;
+  overflow-x: hidden;
   font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -236,6 +237,9 @@ input {
 }
 
 .prototype-banner {
+  position: sticky;
+  top: 56px;
+  z-index: 4;
   display: flex;
   justify-content: space-between;
   gap: 16px;
@@ -395,6 +399,7 @@ mark {
 
 .landing-content {
   min-height: calc(100vh - 91px);
+  overflow-x: clip;
 }
 
 .landing-page {
@@ -412,6 +417,7 @@ mark {
   margin-right: calc(50% - 50vw);
   min-height: clamp(520px, 70vh, 720px);
   overflow: hidden;
+  border-radius: 0;
   padding: clamp(44px, 7vw, 88px) max(24px, calc((100vw - 1180px) / 2));
   background-image: var(--hero-image);
   background-position: center;
