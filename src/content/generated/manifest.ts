@@ -7,7 +7,7 @@ export const manifest = {
   "sourceDescription": "Declarative UI framework for native Windows desktop apps in pure C#.",
   "repoUrl": "https://github.com/microsoft/microsoft-ui-reactor",
   "docsDir": "docs/guide",
-  "generatedAt": "2026-05-29T21:24:17.575Z",
+  "generatedAt": "2026-05-29T21:36:44.333Z",
   "nav": [
     {
       "title": "Home",

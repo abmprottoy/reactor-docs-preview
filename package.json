@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "description": "Unofficial Fluent-style documentation shell for Microsoft.UI.Reactor.",
+  "packageManager": "npm@11.6.2",
   "scripts": {
     "sync:docs": "tsx scripts/sync-docs.ts",
     "dev": "npm run sync:docs && vite --host 127.0.0.1",
