@@ -237,9 +237,6 @@ input {
 }
 
 .prototype-banner {
-  position: sticky;
-  top: 56px;
-  z-index: 4;
   display: flex;
   justify-content: space-between;
   gap: 16px;
@@ -252,14 +249,14 @@ input {
 .layout {
   display: grid;
   grid-template-columns: 288px minmax(0, 1fr) 232px;
-  min-height: calc(100vh - 91px);
+  min-height: calc(100vh - 56px);
 }
 
 .sidebar,
 .toc {
   position: sticky;
-  top: 91px;
-  height: calc(100vh - 91px);
+  top: 56px;
+  height: calc(100vh - 56px);
   overflow: auto;
   border-color: var(--colorNeutralStroke2);
 }
@@ -1040,7 +1037,10 @@ h3:hover .heading-anchor {
 
   .prototype-banner {
     display: grid;
+    gap: 8px;
     padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.35;
   }
 
   .layout {
@@ -1049,7 +1049,7 @@ h3:hover .heading-anchor {
 
   .sidebar {
     position: fixed;
-    inset: 91px auto 0 0;
+    inset: 56px auto 0 0;
     z-index: 4;
     width: min(86vw, 320px);
     transform: translateX(-102%);
@@ -1083,8 +1083,18 @@ h3:hover .heading-anchor {
     gap: 28px;
   }
 
+  .landing-hero-copy {
+    width: 100%;
+    min-width: 0;
+  }
+
   .landing-hero h1 {
-    font-size: 52px;
+    max-width: 100%;
+    font-size: clamp(31px, 8.8vw, 52px);
+  }
+
+  .landing-hero h1 span:first-child {
+    white-space: nowrap;
   }
 
   .landing-hero p,

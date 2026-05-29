@@ -87,14 +87,16 @@ export function App() {
       <div className="app-shell">
         <header className="topbar">
           <div className="brand-block">
-            <Button
-              appearance="subtle"
-              className="mobile-menu-button"
-              aria-label="Toggle navigation"
-              onClick={() => setNavOpen((value) => !value)}
-            >
-              {navOpen ? "Close" : "Menu"}
-            </Button>
+            {!isHome && (
+              <Button
+                appearance="subtle"
+                className="mobile-menu-button"
+                aria-label="Toggle navigation"
+                onClick={() => setNavOpen((value) => !value)}
+              >
+                {navOpen ? "Close" : "Menu"}
+              </Button>
+            )}
             <button className="brand-button" onClick={() => navigate("/")}>
               <span className="brand-product">Microsoft.UI.Reactor</span>
               <span className="brand-preview">Docs Preview</span>
