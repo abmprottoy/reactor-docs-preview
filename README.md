@@ -51,6 +51,12 @@ https://abmprottoy.github.io/reactor-docs-preview/
 
 The workflow builds with the `/reactor-docs-preview/` base path and adds a `404.html` fallback so refreshed docs routes continue to load as a single-page app.
 
+## Keeping Docs Fresh
+
+The GitHub Pages workflow rebuilds automatically once per day. Each build runs `npm run sync:docs`, so new upstream Markdown from `microsoft/microsoft-ui-reactor/docs/guide` is pulled into the deployed site.
+
+The workflow also supports a `repository_dispatch` event named `upstream-docs-updated`. That gives you a hook for a future external monitor or webhook bridge if you want near-immediate rebuilds when the Microsoft repository changes.
+
 ## Attribution
 
 Documentation content is sourced from the [microsoft/microsoft-ui-reactor](https://github.com/microsoft/microsoft-ui-reactor) repository. This repo provides an alternate presentation shell for experimentation and feedback.

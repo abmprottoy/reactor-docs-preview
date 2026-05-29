@@ -4,7 +4,15 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: "17 3 * * *"
+  repository_dispatch:
+    types:
+      - upstream-docs-updated
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: read
