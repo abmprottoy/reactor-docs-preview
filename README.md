@@ -34,28 +34,43 @@ npm run preview
 
 `npm run build` runs the docs sync first, then TypeScript and Vite.
 
-## GitHub Pages
+## Self Deployment
 
-The site is configured to deploy with GitHub Actions.
+This repository does not include an automatic GitHub Actions deployment. That avoids spending GitHub runner minutes on dependency installs and scheduled rebuilds.
 
-1. Push to `main`.
-2. In the GitHub repo, open **Settings > Pages**.
-3. Set **Source** to **GitHub Actions**.
-4. The workflow publishes `dist` to GitHub Pages.
+To build a static copy yourself:
 
-Published URL:
-
-```txt
-https://abmprottoy.github.io/reactor-docs-preview/
+```powershell
+npm run build
 ```
 
-The workflow builds with the `/reactor-docs-preview/` base path and adds a `404.html` fallback so refreshed docs routes continue to load as a single-page app.
+The static site is written to:
+
+```txt
+dist/
+```
+
+You can upload that folder to any static host, including GitHub Pages, Cloudflare Pages, Netlify, Vercel, or a plain web server.
+
+For a subpath deployment such as GitHub Pages project sites, set `GITHUB_PAGES=true` during build so Vite emits `/reactor-docs-preview/` asset paths:
+
+```powershell
+$env:GITHUB_PAGES = "true"
+npm run build
+Remove-Item Env:\GITHUB_PAGES
+```
+
+For single-page app routing on static hosts, copy `dist/index.html` to `dist/404.html` before uploading:
+
+```powershell
+Copy-Item dist/index.html dist/404.html
+```
 
 ## Keeping Docs Fresh
 
-The GitHub Pages workflow rebuilds automatically once per day. Each build runs `npm run sync:docs`, so new upstream Markdown from `microsoft/microsoft-ui-reactor/docs/guide` is pulled into the deployed site.
+Docs are refreshed whenever `npm run sync:docs` runs. The normal build command runs it first, so redeploying after `npm run build` pulls the latest Markdown from `microsoft/microsoft-ui-reactor/docs/guide`.
 
-The workflow also supports a `repository_dispatch` event named `upstream-docs-updated`. That gives you a hook for a future external monitor or webhook bridge if you want near-immediate rebuilds when the Microsoft repository changes.
+If you want automation later, run the build from your own scheduler, server, or deployment platform instead of this repo's GitHub Actions.
 
 ## Attribution
 
